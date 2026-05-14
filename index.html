@@ -8,7 +8,7 @@
         /* 전체 페이지 기본 스타일 */
         body {
             font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
-            text-align: center; /* 가운데 정렬 */
+            text-align: center;
             background-color: #fafafa;
             margin: 0;
             padding: 40px 20px;
@@ -29,49 +29,118 @@
             letter-spacing: 1px;
         }
 
+        /* 부제목(클릭할 부분) 스타일 */
         .title-area h2 {
             font-size: 22px;
             color: #555;
             font-weight: normal;
             margin: 0;
+            cursor: pointer; /* 마우스를 올렸을 때 클릭 가능한 손가락 모양으로 변경 */
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .title-area h2:hover {
+            background-color: #e0e0e0; /* 마우스 올렸을 때 살짝 배경색 변경 */
         }
 
         /* 스케치의 초록색 네모칸 스타일 구현 */
         .map-box {
-            border: 4px solid #6b8e23; /* 스케치와 비슷한 톤의 초록색 테두리 */
-            border-radius: 4px; /* 모서리를 살짝 둥글게 */
+            position: relative; /* 자식 요소(팝업)를 네모칸 안에 가두기 위해 필수! */
+            border: 4px solid #6b8e23;
+            border-radius: 4px;
             width: 90%;
             max-width: 900px;
-            height: 600px; /* 네모칸의 높이 */
+            height: 600px;
             background-color: #ffffff;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
-            overflow: hidden; /* 지도가 네모칸 밖으로 삐져나가지 않게 처리 */
+            overflow: hidden;
         }
 
-        /* 지도 iframe 스타일 */
-        .map-box iframe {
+        /* 카카오맵이 들어갈 영역 */
+        #map {
             width: 100%;
             height: 100%;
-            border: none; /* iframe 기본 테두리 제거 */
+        }
+
+        /* 🌟 새로 추가된 이름 팝업창 스타일 */
+        #name-popup {
+            display: none; /* 처음에는 화면에 보이지 않게 숨김 */
+            position: absolute; /* 네모칸(map-box)을 기준으로 위치 지정 */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* 정확히 정중앙에 배치 */
+            background-color: white;
+            padding: 30px 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10; /* 지도보다 위로 올라오게 설정 */
+            text-align: center;
+        }
+
+        .popup-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+
+        /* 작게 들어가는 x 버튼 스타일 */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .close-btn:hover {
+            color: #ff4d4d; /* 마우스 올리면 빨간색으로 변경 */
         }
     </style>
 </head>
 <body>
 
-    <!-- 상단 제목 영역 -->
     <div class="title-area">
         <h1>캠퍼스의 새들</h1>
-        <h2>조류를 통해 자연을 만나다</h2>
+        <h2 onclick="showNamePopup()">조류를 통해 자연을 만나다</h2>
     </div>
 
-    <!-- 지도가 들어갈 초록색 네모칸 -->
     <div class="map-box">
-        <!-- 별도의 가입이나 API 키 없이 바로 쓸 수 있는 오픈스트리트맵(OpenStreetMap)을 예시로 넣었습니다. -->
-        <iframe 
-            src="https://www.openstreetmap.org/export/embed.html?bbox=126.96%2C37.55%2C127.01%2C37.60&amp;layer=mapnik" 
-            title="캠퍼스 지도">
-        </iframe>
+        <div id="map"></div>
+
+        <div id="name-popup">
+            <div class="close-btn" onclick="hideNamePopup()">X</div>
+            <p class="popup-name">긴꼬리딱새조 정유진 박지혜 김유진 이다빈 허준성</p>
+        </div>
     </div>
+
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4943ba2fc6952cf2d1e6afe9d646d32d"></script>
+    
+    <script>
+        // --- 1. 카카오맵 띄우는 코드 ---
+        var container = document.getElementById('map'); 
+        var options = { 
+            center: new kakao.maps.LatLng(37.596957, 127.051758), // 캠퍼스 중심 좌표로 변경하세요
+            level: 3 
+        };
+        var map = new kakao.maps.Map(container, options); 
+
+        // --- 2. 팝업창 열고 닫는 함수 ---
+        // 부제목을 클릭했을 때 실행되는 함수 (팝업창 보이기)
+        function showNamePopup() {
+            document.getElementById('name-popup').style.display = 'block';
+        }
+
+        // X 버튼을 클릭했을 때 실행되는 함수 (팝업창 숨기기)
+        function hideNamePopup() {
+            document.getElementById('name-popup').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>
