@@ -2,124 +2,78 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>캠퍼스의 새들</title>
     <style>
-        body, html {
+        /* 전체 페이지 기본 스타일 */
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            text-align: center; /* 가운데 정렬 */
+            background-color: #fafafa;
             margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden; /* 스크롤 방지 */
-            background-color: #f0f0f0; /* 이미지 로딩 전 기본 배경색 */
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* [3번] 지도 뒤에 배경 이미지 넣기 */
-        #bg-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* 아래 URL 부분에 넣고 싶은 이미지 주소를 넣으세요 */
-            background-image: url('https://github.com/vldmrcnkv/Birds-in-our-campus-KHU/blob/main/olivebackground.png'); 
-            background-size: cover;
-            background-position: center;
-            z-index: 1; /* 가장 뒤에 배치 */
+        /* 제목 영역 스타일 */
+        .title-area {
+            margin-bottom: 30px;
         }
 
-        /* [1번 & 2번] 박스 없이 중앙에 제목 배치 */
-        #title-container {
-            position: absolute;
-            top: 50%;         /* 세로 중앙 */
-            left: 50%;        /* 가로 중앙 */
-            transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
-            text-align: center;
-            z-index: 100;     /* 지도와 이미지보다 위에 배치 */
-            pointer-events: none; /* 제목 뒤의 지도를 클릭할 수 있게 함 */
-            width: 100%;
+        .title-area h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            letter-spacing: 1px;
         }
 
-        #main-title {
+        .title-area h2 {
+            font-size: 22px;
+            color: #555;
+            font-weight: normal;
             margin: 0;
-            font-size: 60px; /* 제목 크기 (원하는 대로 조절) */
-            color: white;    /* 글자색 (흰색이 배경에서 잘 보입니다) */
-            font-weight: bold;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.5); /* 글자 가독성을 위한 그림자 */
-            letter-spacing: -1px;
         }
 
-        #sub-title {
-            margin: 15px 0 0 0;
-            font-size: 24px;
-            color: #eeeeee;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        /* 스케치의 초록색 네모칸 스타일 구현 */
+        .map-box {
+            border: 4px solid #6b8e23; /* 스케치와 비슷한 톤의 초록색 테두리 */
+            border-radius: 4px; /* 모서리를 살짝 둥글게 */
+            width: 90%;
+            max-width: 900px;
+            height: 600px; /* 네모칸의 높이 */
+            background-color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+            overflow: hidden; /* 지도가 네모칸 밖으로 삐져나가지 않게 처리 */
         }
 
-        /* 지도가 그려질 영역 */
-<div class="map-container">
-    <div id="map"></div>
-</div>
-/* 전체 배경 (지도가 돋보이게 약간 어둡거나 회색 배경 추천) */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* 화면 중앙 정렬을 위해 필요 */
-}
-
-.map-container {
-    /* 화면 가장자리로부터 1/18 간격을 유지하는 너비와 높이 설정 */
-    width: calc(100% - (100% / 18) * 2);
-    height: calc(100vh - (100vh / 18) * 2);
-    
-    /* 정중앙 고정 */
-    position: relative;
-    background: #ffffff;
-    
-    /* 박스 스타일: 모서리 둥글게 및 그림자 */
-    border-radius: 20px; /* 모서리 곡률 */
-    border: 1px solid #ccc;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    
-    /* 핵심: 내부 지도가 박스 밖으로 튀어나오지 않게 자름 */
-    overflow: hidden; 
-}
-
-/* 실제 지도 영역 */
-#map {
-    width: 100%;
-    height: 100%;
-}
+        /* 지도 iframe 스타일 */
+        .map-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none; /* iframe 기본 테두리 제거 */
+        }
     </style>
 </head>
 <body>
 
-    <!-- 지도 뒤 배경 이미지 -->
-    <div id="bg-image"></div>
-
-    <!-- 중앙 제목 -->
-    <div id="title-container">
-        <h1 id="main-title">캠퍼스의 새들</h1>
-        <p id="sub-title">조류를 통해 자연을 만나다</p>
+    <!-- 상단 제목 영역 -->
+    <div class="title-area">
+        <h1>캠퍼스의 새들</h1>
+        <h2>조류를 통해 자연을 만나다</h2>
     </div>
 
-    <!-- 카카오맵 -->
-    <div id="map"></div>
+    <!-- 지도가 들어갈 초록색 네모칸 -->
+    <div class="map-box">
+        <!-- 별도의 가입이나 API 키 없이 바로 쓸 수 있는 오픈스트리트맵(OpenStreetMap)을 예시로 넣었습니다. -->
+        <iframe 
+            src="https://www.openstreetmap.org/export/embed.html?bbox=126.96%2C37.55%2C127.01%2C37.60&amp;layer=mapnik" 
+            title="캠퍼스 지도">
+        </iframe>
+    </div>
 
-    <!-- 카카오맵 API (본인의 JavaScript 키를 넣으세요) -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4943ba2fc6952cf2d1e6afe9d646d32d"></script>
-    
-    <script>
-        var mapContainer = document.getElementById('map'), 
-            mapOption = { 
-                center: new kakao.maps.LatLng(37.597235, 127.051730), // 경희대 서울캠퍼스 본관 중심
-                level: 3 
-            };
-
-        var map = new kakao.maps.Map(mapContainer, mapOption); 
-    </script>
 </body>
 </html>
+
+
