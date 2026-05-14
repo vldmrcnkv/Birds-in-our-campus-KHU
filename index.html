@@ -64,32 +64,15 @@
         <h2>조류를 통해 자연을 만나다</h2>
     </div>
 
-   <!-- 지도가 들어갈 박스 -->
+    <!-- 지도가 들어갈 초록색 네모칸 -->
     <div class="map-box">
-        <div id="map"></div>
+        <!-- 별도의 가입이나 API 키 없이 바로 쓸 수 있는 오픈스트리트맵(OpenStreetMap)을 예시로 넣었습니다. -->
+        <iframe 
+            src="https://www.openstreetmap.org/export/embed.html?bbox=126.96%2C37.55%2C127.01%2C37.60&amp;layer=mapnik" 
+            title="캠퍼스 지도">
+        </iframe>
     </div>
 
-    <!-- 카카오맵 API (본인의 발급받은 JavaScript 키를 넣으세요) -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=4943ba2fc6952cf2d1e6afe9d646d32d"></script>
-    
-    <script>
-        // 지도 설정
-        var mapContainer = document.getElementById('map'), 
-            mapOption = { 
-                center: new kakao.maps.LatLng(37.5925, 127.0526), // 경희대학교 서울캠퍼스 좌표
-                level: 3 // 확대 레벨
-            };
-
-        // 지도 생성
-        var map = new kakao.maps.Map(mapContainer, mapOption);
-
-        // 마커 추가 (선택사항)
-        var markerPosition  = new kakao.maps.LatLng(37.5925, 127.0526); 
-        var marker = new kakao.maps.Marker({
-            position: markerPosition
-        });
-        marker.setMap(map);
-    </script>
 </body>
 </html>
 
