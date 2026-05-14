@@ -56,28 +56,42 @@
         }
 
         /* 지도가 그려질 영역 */
-   <!-- 지도를 감싸는 박스 -->
-<div class="map-box">
-    <h3>긴꼬리딱새조의 탐조 지도</h3> <!-- 제목도 넣을 수 있어요 -->
-    <div id="map"></div> <!-- 실제 지도가 그려지는 곳 -->
+<div class="map-container">
+    <div id="map"></div>
 </div>
-        /* 지도를 감싸는 흰색 박스 스타일 */
-.map-box {
-    width: 90%;            /* 화면 너비의 90% 사용 */
-    max-width: 800px;      /* 너무 커지지 않게 최대 폭 제한 */
-    margin: 20px auto;     /* 가운데 정렬 */
-    padding: 15px;         /* 박스 내부 여백 */
-    background: #ffffff;   /* 박스 배경색 */
-    border: 1px solid #ddd; /* 연한 테두리 */
-    border-radius: 12px;   /* 모서리를 둥글게 */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 은은한 그림자 효과 */
+/* 전체 배경 (지도가 돋보이게 약간 어둡거나 회색 배경 추천) */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 화면 중앙 정렬을 위해 필요 */
+}
+
+.map-container {
+    /* 화면 가장자리로부터 1/18 간격을 유지하는 너비와 높이 설정 */
+    width: calc(100% - (100% / 18) * 2);
+    height: calc(100vh - (100vh / 18) * 2);
+    
+    /* 정중앙 고정 */
+    position: relative;
+    background: #ffffff;
+    
+    /* 박스 스타일: 모서리 둥글게 및 그림자 */
+    border-radius: 20px; /* 모서리 곡률 */
+    border: 1px solid #ccc;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    
+    /* 핵심: 내부 지도가 박스 밖으로 튀어나오지 않게 자름 */
+    overflow: hidden; 
 }
 
 /* 실제 지도 영역 */
 #map {
-    width: 100%;           /* 박스 너비에 맞춤 */
-    height: 400px;         /* 지도의 높이 설정 */
-    border-radius: 8px;    /* 지도 자체 모서리도 살짝 둥글게 */
+    width: 100%;
+    height: 100%;
 }
     </style>
 </head>
