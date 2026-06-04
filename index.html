@@ -109,25 +109,57 @@
     <!-- 카카오맵 API (HTTPS 명시) -->
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=4943ba2fc6952cf2d1e6afe9d646d32d"></script>
     
-    <script>
-        // [수정] currentStyle 에러 방지를 위해 load 함수 사용
-        kakao.maps.load(function() {
-            var mapContainer = document.getElementById('map'); 
-            if (!mapContainer) return; // 요소가 없으면 실행 중단
+  
+<script>
+    // 1. 카카오맵 API가 로드된 후 실행
+    kakao.maps.load(function() {
+        var mapContainer = document.getElementById('map'); 
+        if (!mapContainer) return;
 
-            var mapOption = { 
-                center: new kakao.maps.LatLng(37.596957, 127.051758), 
-                level: 3 
-            };
-            
-            // 지도 생성
-            var map = new kakao.maps.Map(mapContainer, mapOption);
+        var mapOption = { 
+            center: new kakao.maps.LatLng(37.596957, 127.051758), // 지도 중심 좌표
+            level: 3 
+        };
+        
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // --- 여기서부터 마커와 인포윈도우 설정 ---
+
+        // [마커 좌표] 핀을 꼽고 싶은 위치의 좌표
+        var markerPosition = new kakao.maps.LatLng(37.596957, 127.051758); 
+
+        // [마커 생성]
+        var marker = new kakao.maps.Marker({
+            position: markerPosition
+        });
+        marker.setMap(map); // 마커를 지도 위에 올림
+
+        // [인포윈도우(이미지 팝업) 내용] 
+        // 4단계: 여기에 깃허브 이미지 링크를 넣었습니다.
+        var iwContent = `
+            <div style="padding:10px; min-width:180px; text-align:center;">
+                <img src="https://raw.githubusercontent.com/vldmrcnkv/Birds-in-our-campus-KHU/main/%EA%B8%B4%EA%BC%AC%EB%A6%AC%EB%94%B1%EC%83%88%EC%9D%98%20%EA%B7%B8%EB%A6%BC.png" 
+                     style="width:150px; border-radius:5px; display:block; margin:0 auto 5px;">
+                <span style="font-size:12px; color:#6b8e23; font-weight:bold;">긴꼬리딱새 관찰 지점</span>
+            </div>`,
+            iwRemoveable = true; // X 버튼 활성화
+
+        // [인포윈도우 생성]
+        var infowindow = new kakao.maps.InfoWindow({
+            content : iwContent,
+            removable : iwRemoveable
         });
 
-        // 팝업 제어 함수
-        function showNamePopup() { document.getElementById('name-popup').style.display = 'block'; }
-        function hideNamePopup() { document.getElementById('name-popup').style.display = 'none'; }
-    </script>
+        // [클릭 이벤트] 마커를 클릭하면 인포윈도우가 열리게 설정
+        kakao.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);  
+        });
+    });
 
+    // 오른쪽 아래 새 이미지 클릭 시 뜨는 팀원 소개 팝업 함수
+    function showNamePopup() { document.getElementById('name-popup').style.display = 'block'; }
+    function hideNamePopup() { document.getElementById('name-popup').style.display = 'none'; }
+</script>
+    
 </body>
 </html>
