@@ -61,31 +61,51 @@
         .bird-button img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
 
         /* 팝업창 디자인 */
-        /* 팝업 전체 틀 CSS (이전과 동일하게 깔끔한 디자인 적용) */
-        .wrap { position: absolute; left: 0; bottom: 40px; width: 280px; margin-left: -140px; text-align: left; font-family: 'Malgun Gothic', dotum, '돋움', sans-serif; }
-        .info { width: 100%; border-radius: 5px; border: 1px solid #ccc; background: #fff; box-shadow: 0px 2px 4px rgba(0,0,0,0.2); position: relative; }
-        
-        /* X (닫기) 버튼 */
-        .close-btn { position: absolute; top: 8px; right: 10px; cursor: pointer; font-weight: bold; color: #888; font-size: 14px; }
-        .close-btn:hover { color: #333; }
-        
-        /* 본문 레이아웃 (좌: 기록자료, 우: 텍스트 정보) */
-        .body { display: flex; padding: 15px; gap: 12px; }
-        
-        /* ① 기록자료 영역 (스케치의 왼쪽 큰 네모) */
-        .media-box { width: 100px; height: 100px; background: #f4f4f4; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center; }
-        
-        /* 우측 텍스트 영역 묶음 */
-        .text-box { flex: 1; display: flex; flex-direction: column; }
-        
-        /* ② 날짜 (초록색 포인트) */
-        .date { color: #5B8A2B; font-size: 12px; margin-bottom: 4px; font-weight: bold; }
-        
-        /* ③ 종 (크고 진하게) */
-        .species { font-size: 16px; font-weight: bold; margin-bottom: 8px; color: #333; }
-        
-        /* ④ 설명 (테두리 박스 형태) */
-        .desc { font-size: 12px; color: #555; border: 1px solid #ddd; padding: 5px; flex-grow: 1; background: #fafafa; overflow-y: auto; }
+         #name-popup {
+            display: none;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            text-align: center;
+            min-width: 260px;
+            border: 2px solid #6b8e23;
+        }
+
+        .team-name { color: #6b8e23; font-weight: bold; font-size: 1.4em; margin-bottom: 12px; }
+        .member-names { color: #444; font-size: 1em; margin: 0; line-height: 1.6; }
+        .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; }
+    
+    /* 팝업 전체 틀 */
+    .wrap { position: absolute; left: 0; bottom: 40px; width: 300px; margin-left: -150px; text-align: left; font-family: 'Malgun Gothic', dotum, '돋움', sans-serif; }
+    .info { width: 100%; border-radius: 8px; border: 1px solid #ccc; background: #fff; box-shadow: 0px 3px 6px rgba(0,0,0,0.15); position: relative; overflow: hidden; }
+    
+    /* X (닫기) 버튼 */
+    .close-btn { position: absolute; top: 10px; right: 12px; cursor: pointer; font-weight: bold; color: #888; font-size: 14px; z-index: 10; }
+    .close-btn:hover { color: #333; }
+    
+    /* 본문 레이아웃 (세로로 쌓이도록 구조 변경) */
+    .body { display: flex; flex-direction: column; padding: 15px; gap: 12px; }
+    
+    /* 상단 구역: 좌측 이미지 박스 + 우측 텍스트 박스 */
+    .top-section { display: flex; gap: 12px; }
+    .media-box { width: 100px; height: 100px; background: #f4f4f4; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center; flex-shrink: 0; }
+    .text-box { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    
+    /* 텍스트 요소들 */
+    .date { color: #5B8A2B; font-size: 12px; margin-bottom: 4px; font-weight: bold; }
+    .species { font-size: 16px; font-weight: bold; margin-bottom: 6px; color: #333; }
+    .desc { font-size: 12px; color: #555; border: 1px solid #ddd; padding: 6px; background: #fafafa; height: 50px; overflow-y: auto; }
+    
+    /* ⭐ 새롭게 추가된 하단 오디오 녹음 칸 */
+    .audio-section { border-top: 1px dashed #eee; padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+    .audio-title { font-size: 11px; color: #5B8A2B; font-weight: bold; }
+    .audio-player { width: 100%; height: 32px; outline: none; }
+    .no-audio { font-size: 12px; color: #999; font-style: italic; text-align: center; padding: 4px 0; }
     </style>
 </head>
 <body>
