@@ -117,9 +117,46 @@
     
     /* ⭐ 오디오 플레이어 (불필요한 테두리 빼고 팝업 안에 꽉 차고 깔끔하게!) */
     .audio-player { width: 100%; height: 35px; outline: none; }
+        /* 🕊️ 날아가는 새 효과 스타일 */
+    .flying-bird {
+        position: fixed;
+        top: 30%; /* 새가 날아갈 높이 (위에서 30% 지점, 원하는 대로 조절 가능) */
+        left: -60px; /* 처음에는 화면 왼쪽 바깥에 숨겨둠 */
+        font-size: 50px; /* 새 크기 */
+        z-index: 9999; /* 지도나 로고보다 무조건 위에 뜨게 설정 */
+        
+        /* 애니메이션 설정: 이름(fly), 5초 동안, 일정하게(linear), 0.5초 뒤 시작, 끝난 후 그 자리에 정지(forwards) */
+        animation: fly 5s linear 0.5s forwards;
+        pointer-events: none; /* 새를 클릭해도 지도가 클릭되도록 클릭 방해 금지 설정 */
+    }
+
+    /* @keyframes로 새가 날아가는 평행우주 경로 그리기 */
+    @keyframes fly {
+        0% {
+            left: -60px;
+            transform: scaleX(-1) translateY(0); /* scaleX(-1)은 이모지 방향을 오른쪽으로 돌려주는 마법의 코드야! */
+        }
+        25% {
+            transform: scaleX(-1) translateY(-40px); /* 위로 상승 */
+        }
+        50% {
+            transform: scaleX(-1) translateY(20px);  /* 아래로 하강 (날갯짓 하듯 출렁이게) */
+        }
+        75% {
+            transform: scaleX(-1) translateY(-30px); /* 다시 상승 */
+        }
+        100% {
+            left: 100%; /* 화면 오른쪽 바깥으로 완전히 탈출 */
+            transform: scaleX(-1) translateY(0);
+        }
+    }
     </style>
 </head>
 <body>
+     <body>
+    <div class="flying-bird">🕊️</div>
+
+    <div class="header-container">
 
     <div class="map-box">
         <!-- 제목 영역 -->
