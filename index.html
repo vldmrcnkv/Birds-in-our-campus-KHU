@@ -79,6 +79,49 @@
         .team-name { color: #6b8e23; font-weight: bold; font-size: 1.4em; margin-bottom: 12px; }
         .member-names { color: #444; font-size: 1em; margin: 0; line-height: 1.6; }
         .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; }
+        
+        /* 팝업 커스텀 스타일 (사각형, 요소 배치) */
+    .leaflet-popup-content-wrapper {
+      border-radius: 8px; /* 각진 사각형을 원하면 0px로 변경 */
+      padding: 0;
+      overflow: hidden;
+    }
+    .bird-popup {
+      width: 250px;
+      text-align: center;
+      padding: 15px;
+      box-sizing: border-box;
+    }
+    .bird-popup img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .bird-popup h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #333;
+    }
+    .bird-popup p {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.4;
+    }
+    /* 날짜: 초록색 글씨 */
+    .bird-popup .date {
+      display: block;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .bird-popup audio {
+      width: 100%;
+      height: 30px;
+    }
     </style>
 </head>
 <body>
@@ -125,34 +168,114 @@
 
         // --- 여기서부터 마커와 인포윈도우 설정 ---
 
-        // [마커 좌표] 핀을 꼽고 싶은 위치의 좌표
-        var markerPosition = new kakao.maps.LatLng(37.596957, 127.051758); 
+       // 1. 관측한 새 데이터 배열 (여기에 데이터를 계속 추가하시면 됩니다)
+        var birdData = [
+            {
+                species: 'oriental_magpie', // 같은 종을 묶어주는 핵심 키 (영문/숫자 조합 추천)
+                name: '까치',
+                lat: 37.596957, 
+                lng: 127.051758,
+                date: '2026-05-15',
+                desc: '중앙도서관 근처에서 둥지를 튼 까치입니다.',
+                // 작성하신 방식처럼 raw.githubusercontent.com 링크를 넣어주세요
+                img: 'https://images.unsplash.com/photo-1552727451-6f4dd1fb9121?w=400', 
+                audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            },
+            {
+                species: 'oriental_magpie', // 위와 species가 같으므로 클릭 시 같이 강조됨
+                name: '까치',
+                lat: 37.598000, 
+                lng: 127.053000,
+                date: '2026-05-18',
+                desc: '본관 앞 나무에서 관찰된 까치 무리입니다.',
+                img: 'https://images.unsplash.com/photo-1552727451-6f4dd1fb9121?w=400',
+                audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            },
+            {
+                species: 'brown_eared_bulbul', 
+                name: '직박구리',
+                lat: 37.595500, 
+                lng: 127.050500,
+                date: '2026-05-20',
+                desc: '시끄러운 소리로 울며 열매를 먹고 있는 직박구리.',
+                img: 'https://images.unsplash.com/photo-1618331835717-801e976710b2?w=400',
+                audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+            }
+        ];
 
-        // [마커 생성]
-        var marker = new kakao.maps.Marker({
-            position: markerPosition
+        var markers = [];
+        var activeOverlay = null; // 현재 열려있는 팝업을 추적
+
+        // 2. 데이터 배열을 순회하며 마커와 팝업 생성
+        birdData.forEach(function(bird) {
+            var position = new kakao.maps.LatLng(bird.lat, bird.lng);
+
+            // 마커 생성
+            var marker = new kakao.maps.Marker({
+                position: position,
+                map: map
+            });
+            
+            // 마커 객체에 종(species) 정보 숨겨두기 (나중에 비교할 때 사용)
+            marker.species = bird.species;
+            markers.push(marker);
+
+            // 팝업(오버레이)에 들어갈 HTML 요소 생성
+            var contentWrap = document.createElement('div');
+            contentWrap.className = 'bird-popup';
+            
+            // 요구하신 구성: 엑스버튼, 사진, 이름, 날짜(초록), 설명, 녹음
+            contentWrap.innerHTML = `
+                <button class="close-btn" title="닫기">✖</button>
+                <img src="${bird.img}" alt="${bird.name}">
+                <h3>${bird.name}</h3>
+                <span class="date">${bird.date}</span>
+                <p>${bird.desc}</p>
+                <audio controls src="${bird.audio}"></audio>
+            `;
+
+            var customOverlay = new kakao.maps.CustomOverlay({
+                position: position,
+                content: contentWrap,
+                yAnchor: 1, // 마커 꼭대기에 팝업 꼬리가 오도록 설정
+                zIndex: 3
+            });
+
+            // X 버튼 클릭 시 팝업 닫기 및 마커 투명도 복구
+            var closeBtn = contentWrap.querySelector('.close-btn');
+            closeBtn.onclick = function() {
+                customOverlay.setMap(null);
+                markers.forEach(function(m) { m.setOpacity(1); });
+            };
+
+            // 3. 마커 클릭 이벤트: 팝업 열기 & 같은 종 강조
+            kakao.maps.event.addListener(marker, 'click', function() {
+                // 이미 열려있는 팝업이 있다면 닫기
+                if (activeOverlay) {
+                    activeOverlay.setMap(null);
+                }
+                
+                // 클릭한 마커의 팝업 띄우기
+                customOverlay.setMap(map);
+                activeOverlay = customOverlay;
+
+                // 같은 종은 뚜렷하게(Opacity 1), 다른 종은 투명하게(Opacity 0.3)
+                markers.forEach(function(m) {
+                    if (m.species === marker.species) {
+                        m.setOpacity(1);
+                    } else {
+                        m.setOpacity(0.3);
+                    }
+                });
+            });
         });
-        marker.setMap(map); // 마커를 지도 위에 올림
 
-        // [인포윈도우(이미지 팝업) 내용] 
-        // 4단계: 여기에 깃허브 이미지 링크를 넣었습니다.
-        var iwContent = `
-            <div style="padding:10px; min-width:180px; text-align:center;">
-                <img src="https://raw.githubusercontent.com/vldmrcnkv/Birds-in-our-campus-KHU/main/%EA%B8%B4%EA%BC%AC%EB%A6%AC%EB%94%B1%EC%83%88%EC%9D%98%20%EA%B7%B8%EB%A6%BC.png" 
-                     style="width:150px; border-radius:5px; display:block; margin:0 auto 5px;">
-                <span style="font-size:12px; color:#6b8e23; font-weight:bold;">긴꼬리딱새 관찰 지점</span>
-            </div>`,
-            iwRemoveable = true; // X 버튼 활성화
-
-        // [인포윈도우 생성]
-        var infowindow = new kakao.maps.InfoWindow({
-            content : iwContent,
-            removable : iwRemoveable
-        });
-
-        // [클릭 이벤트] 마커를 클릭하면 인포윈도우가 열리게 설정
-        kakao.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map, marker);  
+        // 4. 지도의 빈 공간 클릭 시 팝업 닫기 및 투명도 복구
+        kakao.maps.event.addListener(map, 'click', function() {
+            if (activeOverlay) {
+                activeOverlay.setMap(null);
+            }
+            markers.forEach(function(m) { m.setOpacity(1); });
         });
     });
 
