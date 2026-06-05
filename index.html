@@ -79,6 +79,81 @@
         .team-name { color: #6b8e23; font-weight: bold; font-size: 1.4em; margin-bottom: 12px; }
         .member-names { color: #444; font-size: 1em; margin: 0; line-height: 1.6; }
         .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; }
+        
+       /* 커스텀 팝업(오버레이) 디자인 */
+    .bird-popup {
+      position: relative;
+      background: #ffffff;
+      width: 260px; /* 팝업 너비 */
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
+      box-sizing: border-box;
+      text-align: center;
+      margin-bottom: 25px; /* 마커 위로 띄우기 위한 여백 */
+      z-index: 100;
+    }
+    /* 팝업 아래쪽 말풍선 꼬리 */
+    .bird-popup::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      margin-left: -12px;
+      border-width: 12px 12px 0;
+      border-style: solid;
+      border-color: #ffffff transparent transparent transparent;
+    }
+
+    /* 엑스(X) 버튼 */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: bold;
+      color: #999;
+      cursor: pointer;
+      padding: 0;
+    }
+    .close-btn:hover { color: #333; }
+
+    /* 팝업 내부 텍스트 및 미디어 */
+    .bird-popup img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-top: 15px; /* X버튼과 안 겹치게 */
+      margin-bottom: 10px;
+    }
+    .bird-popup h3 {
+      margin: 0 0 5px 0;
+      font-size: 18px;
+      color: #333;
+    }
+    /* 날짜 (초록글씨) */
+    .bird-popup .date {
+      display: block;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .bird-popup p {
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+    .bird-popup audio {
+      width: 100%;
+      height: 35px;
+      outline: none;
+    }
     </style>
 </head>
 <body>
@@ -122,37 +197,124 @@
         };
         
         var map = new kakao.maps.Map(mapContainer, mapOption);
-
+        
         // --- 여기서부터 마커와 인포윈도우 설정 ---
 
-        // [마커 좌표] 핀을 꼽고 싶은 위치의 좌표
-        var markerPosition = new kakao.maps.LatLng(37.596957, 127.051758); 
+       // 1. 관측한 새 데이터 배열 (여기에 데이터를 계속 추가하시면 됩니다)
+        var birdData = [
+            {
+                species: 'sparrow',          // 1. 종 식별자 (같은 종끼리 동시에 불투명/투명화 되는 기준, 영문 추천)
+                name: '참새',                 // 2. 팝업창에 크게 뜰 새 이름
+                lat: 37.596957,              // 3. 발견한 장소의 위도 좌표
+                lng: 127.051758,             // 4. 발견한 장소의 경도 좌표
+                date: '2026-05-15',          // 5. 관측 날짜 (초록색 글씨로 표시됨)
+                desc: '여기에 새 설명을 적으세요.', // 6. 새에 대한 설명 글
+                img: 'sparrow.jpg',          // 7. 깃허브에 올린 새 사진 파일 이름
+                audio: 'sparrow_sound.mp3',  // 8. 깃허브에 올린 녹음 파일 이름
+                markerImg: 'sparrow_icon.png'// 9. 지도 위에 핀 대신 보여줄 마커 이미지 이름
+            },
+            {
+                species: 'sparrow',          // 1. 종 식별자 (같은 종끼리 동시에 불투명/투명화 되는 기준, 영문 추천)
+                name: '참새',                 // 2. 팝업창에 크게 뜰 새 이름
+                lat: 37.596957,              // 3. 발견한 장소의 위도 좌표
+                lng: 127.051758,             // 4. 발견한 장소의 경도 좌표
+                date: '2026-05-15',          // 5. 관측 날짜 (초록색 글씨로 표시됨)
+                desc: '여기에 새 설명을 적으세요.', // 6. 새에 대한 설명 글
+                img: 'sparrow.jpg',          // 7. 깃허브에 올린 새 사진 파일 이름
+                audio: 'sparrow_sound.mp3',  // 8. 깃허브에 올린 녹음 파일 이름
+                markerImg: 'sparrow_icon.png'// 9. 지도 위에 핀 대신 보여줄 마커 이미지 이름
+            },
+            {
+                species: 'sparrow',          // 1. 종 식별자 (같은 종끼리 동시에 불투명/투명화 되는 기준, 영문 추천)
+                name: '참새',                 // 2. 팝업창에 크게 뜰 새 이름
+                lat: 37.596957,              // 3. 발견한 장소의 위도 좌표
+                lng: 127.051758,             // 4. 발견한 장소의 경도 좌표
+                date: '2026-05-15',          // 5. 관측 날짜 (초록색 글씨로 표시됨)
+                desc: '여기에 새 설명을 적으세요.', // 6. 새에 대한 설명 글
+                img: 'sparrow.jpg',          // 7. 깃허브에 올린 새 사진 파일 이름
+                audio: 'sparrow_sound.mp3',  // 8. 깃허브에 올린 녹음 파일 이름
+                markerImg: 'sparrow_icon.png'// 9. 지도 위에 핀 대신 보여줄 마커 이미지 이름
+            }
+        ];
 
-        // [마커 생성]
-        var marker = new kakao.maps.Marker({
-            position: markerPosition
+        var markers = [];
+        var activeOverlay = null; // 현재 열려있는 팝업을 추적
+
+     birdData.forEach(function(bird) {
+            var position = new kakao.maps.LatLng(bird.lat, bird.lng);
+
+             // ★ 2. 카카오맵 커스텀 마커 이미지 설정 부분
+            var imageSrc = bird.markerImg; // 데이터에 적어둔 이미지 경로
+            var imageSize = new kakao.maps.Size(40, 40); // 마커의 크기 (가로 40px, 세로 40px)
+            var imageOption = { offset: new kakao.maps.Point(20, 40) }; // 마커가 땅에 닿는 지점 설정 (가로의 절반, 세로 끝)
+
+            // 카카오 마커 이미지 객체 생성
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+            // 3. 마커 생성할 때 image 옵션 추가
+            var marker = new kakao.maps.Marker({
+                position: position,
+                map: map,
+                image: markerImage // ★ 이 줄이 추가되어 기본 핀 대신 지정한 그림이 뜹니다!
+            });
+
+            // 마커 객체에 종(species) 정보 저장
+            marker.species = bird.species;
+            markers.push(marker);
+
+            // 팝업(오버레이)에 들어갈 HTML 요소 생성
+            var contentWrap = document.createElement('div');
+            contentWrap.className = 'bird-popup';
+            
+            contentWrap.innerHTML = `
+                <button class="close-btn" title="닫기">✖</button>
+                <img src="${bird.img}" alt="${bird.name}">
+                <h3>${bird.name}</h3>
+                <span class="date">${bird.date}</span>
+                <p>${bird.desc}</p>
+                <audio controls src="${bird.audio}"></audio>
+            `;
+
+            var customOverlay = new kakao.maps.CustomOverlay({
+                position: position,
+                content: contentWrap,
+                yAnchor: 1, 
+                zIndex: 3
+            });
+
+            // X 버튼 클릭 이벤트
+            var closeBtn = contentWrap.querySelector('.close-btn');
+            closeBtn.onclick = function() {
+                customOverlay.setMap(null);
+                markers.forEach(function(m) { m.setOpacity(1); }); // 모든 마커 투명도 원상복구
+            };
+
+            // 3. 마커 클릭 이벤트: 팝업 열기 & 같은 종 강조 효과
+            kakao.maps.event.addListener(marker, 'click', function() {
+                if (activeOverlay) {
+                    activeOverlay.setMap(null); // 기존 팝업 닫기
+                }
+                
+                customOverlay.setMap(map); // 새 팝업 열기
+                activeOverlay = customOverlay;
+
+                // 클릭한 새와 같은 종은 선명하게(1), 다른 종은 투명하게(0.3)
+                markers.forEach(function(m) {
+                    if (m.species === marker.species) {
+                        m.setOpacity(1);
+                    } else {
+                        m.setOpacity(0.3);
+                    }
+                });
+            });
         });
-        marker.setMap(map); // 마커를 지도 위에 올림
 
-        // [인포윈도우(이미지 팝업) 내용] 
-        // 4단계: 여기에 깃허브 이미지 링크를 넣었습니다.
-        var iwContent = `
-            <div style="padding:10px; min-width:180px; text-align:center;">
-                <img src="https://raw.githubusercontent.com/vldmrcnkv/Birds-in-our-campus-KHU/main/%EA%B8%B4%EA%BC%AC%EB%A6%AC%EB%94%B1%EC%83%88%EC%9D%98%20%EA%B7%B8%EB%A6%BC.png" 
-                     style="width:150px; border-radius:5px; display:block; margin:0 auto 5px;">
-                <span style="font-size:12px; color:#6b8e23; font-weight:bold;">긴꼬리딱새 관찰 지점</span>
-            </div>`,
-            iwRemoveable = true; // X 버튼 활성화
-
-        // [인포윈도우 생성]
-        var infowindow = new kakao.maps.InfoWindow({
-            content : iwContent,
-            removable : iwRemoveable
-        });
-
-        // [클릭 이벤트] 마커를 클릭하면 인포윈도우가 열리게 설정
-        kakao.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map, marker);  
+        // 4. 지도 빈 공간 클릭 시 팝업 닫기
+        kakao.maps.event.addListener(map, 'click', function() {
+            if (activeOverlay) {
+                activeOverlay.setMap(null);
+            }
+            markers.forEach(function(m) { m.setOpacity(1); });
         });
     });
 
@@ -160,6 +322,5 @@
     function showNamePopup() { document.getElementById('name-popup').style.display = 'block'; }
     function hideNamePopup() { document.getElementById('name-popup').style.display = 'none'; }
 </script>
-    
 </body>
 </html>
