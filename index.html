@@ -258,17 +258,15 @@
         var markers = [];
         var activeOverlay = null; // 현재 열려있는 팝업을 추적
 
-        // 2. 데이터 배열을 순회하며 마커와 팝업 생성
-        birdData.forEach(function(bird) {
+     birdData.forEach(function(bird) {
             var position = new kakao.maps.LatLng(bird.lat, bird.lng);
 
-            // 마커 생성
             var marker = new kakao.maps.Marker({
                 position: position,
                 map: map
             });
             
-            // 마커 객체에 종(species) 정보 숨겨두기 (나중에 비교할 때 사용)
+            // 마커 객체에 종(species) 정보 저장
             marker.species = bird.species;
             markers.push(marker);
 
@@ -276,9 +274,6 @@
             var contentWrap = document.createElement('div');
             contentWrap.className = 'bird-popup';
             
-            // 요구하신 구성: 엑스버튼, 사진, 이름, 날짜(초록), 설명, 녹음
-        var contentWrap = document.createElement('div');
-            contentWrap.className = 'bird-popup';
             contentWrap.innerHTML = `
                 <button class="close-btn" title="닫기">✖</button>
                 <img src="${bird.img}" alt="${bird.name}">
@@ -295,17 +290,23 @@
                 zIndex: 3
             });
 
+            // X 버튼 클릭 이벤트
             var closeBtn = contentWrap.querySelector('.close-btn');
             closeBtn.onclick = function() {
                 customOverlay.setMap(null);
-                markers.forEach(function(m) { m.setOpacity(1); });
+                markers.forEach(function(m) { m.setOpacity(1); }); // 모든 마커 투명도 원상복구
             };
 
+            // 3. 마커 클릭 이벤트: 팝업 열기 & 같은 종 강조 효과
             kakao.maps.event.addListener(marker, 'click', function() {
-                if (activeOverlay) { activeOverlay.setMap(null); }
-                customOverlay.setMap(map);
+                if (activeOverlay) {
+                    activeOverlay.setMap(null); // 기존 팝업 닫기
+                }
+                
+                customOverlay.setMap(map); // 새 팝업 열기
                 activeOverlay = customOverlay;
 
+                // 클릭한 새와 같은 종은 선명하게(1), 다른 종은 투명하게(0.3)
                 markers.forEach(function(m) {
                     if (m.species === marker.species) {
                         m.setOpacity(1);
@@ -316,13 +317,7 @@
             });
         });
 
-        kakao.maps.event.addListener(map, 'click', function() {
-            if (activeOverlay) { activeOverlay.setMap(null); }
-            markers.forEach(function(m) { m.setOpacity(1); });
-        });
-    });
-
-        // 4. 지도의 빈 공간 클릭 시 팝업 닫기 및 투명도 복구
+        // 4. 지도 빈 공간 클릭 시 팝업 닫기
         kakao.maps.event.addListener(map, 'click', function() {
             if (activeOverlay) {
                 activeOverlay.setMap(null);
