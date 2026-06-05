@@ -91,6 +91,7 @@
       box-sizing: border-box;
       text-align: center;
       margin-bottom: 25px; /* 마커 위로 띄우기 위한 여백 */
+      z-index: 100;
     }
     /* 팝업 아래쪽 말풍선 꼬리 */
     .bird-popup::after {
@@ -196,26 +197,7 @@
         };
         
         var map = new kakao.maps.Map(mapContainer, mapOption);
-
         
-        // ★ 2. 카카오맵 커스텀 마커 이미지 설정 부분
-            var imageSrc = bird.markerImg; // 데이터에 적어둔 이미지 경로
-            var imageSize = new kakao.maps.Size(40, 40); // 마커의 크기 (가로 40px, 세로 40px)
-            var imageOption = { offset: new kakao.maps.Point(20, 40) }; // 마커가 땅에 닿는 지점 설정 (가로의 절반, 세로 끝)
-
-            // 카카오 마커 이미지 객체 생성
-            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-
-            // 3. 마커 생성할 때 image 옵션 추가
-            var marker = new kakao.maps.Marker({
-                position: position,
-                map: map,
-                image: markerImage // ★ 이 줄이 추가되어 기본 핀 대신 지정한 그림이 뜹니다!
-            });
-            
-            marker.species = bird.species;
-            markers.push(marker);
-
         // --- 여기서부터 마커와 인포윈도우 설정 ---
 
        // 1. 관측한 새 데이터 배열 (여기에 데이터를 계속 추가하시면 됩니다)
@@ -261,11 +243,21 @@
      birdData.forEach(function(bird) {
             var position = new kakao.maps.LatLng(bird.lat, bird.lng);
 
+             // ★ 2. 카카오맵 커스텀 마커 이미지 설정 부분
+            var imageSrc = bird.markerImg; // 데이터에 적어둔 이미지 경로
+            var imageSize = new kakao.maps.Size(40, 40); // 마커의 크기 (가로 40px, 세로 40px)
+            var imageOption = { offset: new kakao.maps.Point(20, 40) }; // 마커가 땅에 닿는 지점 설정 (가로의 절반, 세로 끝)
+
+            // 카카오 마커 이미지 객체 생성
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+            // 3. 마커 생성할 때 image 옵션 추가
             var marker = new kakao.maps.Marker({
                 position: position,
-                map: map
+                map: map,
+                image: markerImage // ★ 이 줄이 추가되어 기본 핀 대신 지정한 그림이 뜹니다!
             });
-            
+
             // 마커 객체에 종(species) 정보 저장
             marker.species = bird.species;
             markers.push(marker);
@@ -330,6 +322,5 @@
     function showNamePopup() { document.getElementById('name-popup').style.display = 'block'; }
     function hideNamePopup() { document.getElementById('name-popup').style.display = 'none'; }
 </script>
-    
 </body>
 </html>
