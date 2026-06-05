@@ -14,16 +14,16 @@
             overflow: hidden;
         }
 
-        /* 메인 지도 박스 (화면 가장자리 1/18 여백) */
-        .map-box {
-            position: relative;
-            width: calc(100% - (100% / 9));
-            height: calc(100vh - (100vh / 9));
-            border: 4px solid #6b8e23;
-            border-radius: 20px;
-            background-color: #FFF5CC;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
+       /* 메인 지도 박스 (화면 가장자리 여백) */
+    .map-box {
+        position: relative;
+        width: 90vw; /* 화면 가로의 90% 크기 (조금 더 직관적으로 변경) */
+        height: 85vh; /* 화면 세로의 85% 크기 */
+        border: 10px solid #5B7C3E; /* 두께를 10px로 굵게, 색상을 짙은 초록색으로 변경! */
+        border-radius: 20px; /* 모서리 둥글게 */
+        background-color: #ffffff; /* 안쪽 배경은 하얗게 */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* 그림자를 조금 더 진하게 */
+    }
 
         #map { width: 100%; height: 100%; border-radius: 16px; }
 
