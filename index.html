@@ -202,35 +202,37 @@
        // 1. 관측한 새 데이터 배열 (여기에 데이터를 계속 추가하시면 됩니다)
         var birdData = [
             {
-                species: 'oriental_magpie', // 같은 종을 묶어주는 핵심 키 (영문/숫자 조합 추천)
-                name: '직박구리',
-                lat: 37.596957, 
-                lng: 127.051758,
-                date: '2026-05-15',
-                desc: '중앙도서관 근처에서 자주 우는 직박구리입니다.',
-                // 작성하신 방식처럼 raw.githubusercontent.com 링크를 넣어주세요
-                img: 'https://images.unsplash.com/photo-1552727451-6f4dd1fb9121?w=400', 
-                audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+                species: 'sparrow',          // 1. 종 식별자 (같은 종끼리 동시에 불투명/투명화 되는 기준, 영문 추천)
+                name: '참새',                 // 2. 팝업창에 크게 뜰 새 이름
+                lat: 37.596957,              // 3. 발견한 장소의 위도 좌표
+                lng: 127.051758,             // 4. 발견한 장소의 경도 좌표
+                date: '2026-05-15',          // 5. 관측 날짜 (초록색 글씨로 표시됨)
+                desc: '여기에 새 설명을 적으세요.', // 6. 새에 대한 설명 글
+                img: 'sparrow.jpg',          // 7. 깃허브에 올린 새 사진 파일 이름
+                audio: 'sparrow_sound.mp3',  // 8. 깃허브에 올린 녹음 파일 이름
+                markerImg: 'sparrow_icon.png'// 9. 지도 위에 핀 대신 보여줄 마커 이미지 이름
             },
             {
-                species: 'oriental_magpie', // 위와 species가 같으므로 클릭 시 같이 강조됨
-                name: '까치',
-                lat: 37.598000, 
-                lng: 127.053000,
-                date: '2026-05-18',
-                desc: '본관 앞 나무에서 관찰된 까치 무리입니다.',
-                img: 'https://images.unsplash.com/photo-1552727451-6f4dd1fb9121?w=400',
-                audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+                species: 'sparrow',          // 1. 종 식별자 (같은 종끼리 동시에 불투명/투명화 되는 기준, 영문 추천)
+                name: '참새',                 // 2. 팝업창에 크게 뜰 새 이름
+                lat: 37.596957,              // 3. 발견한 장소의 위도 좌표
+                lng: 127.051758,             // 4. 발견한 장소의 경도 좌표
+                date: '2026-05-15',          // 5. 관측 날짜 (초록색 글씨로 표시됨)
+                desc: '여기에 새 설명을 적으세요.', // 6. 새에 대한 설명 글
+                img: 'sparrow.jpg',          // 7. 깃허브에 올린 새 사진 파일 이름
+                audio: 'sparrow_sound.mp3',  // 8. 깃허브에 올린 녹음 파일 이름
+                markerImg: 'sparrow_icon.png'// 9. 지도 위에 핀 대신 보여줄 마커 이미지 이름
             },
             {
-                species: 'brown_eared_bulbul', 
-                name: '직박구리',
-                lat: 37.595500, 
-                lng: 127.050500,
-                date: '2026-05-20',
-                desc: '시끄러운 소리로 울며 열매를 먹고 있는 직박구리.',
-                img: 'https://images.unsplash.com/photo-1618331835717-801e976710b2?w=400',
-                audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+                species: 'sparrow',          // 1. 종 식별자 (같은 종끼리 동시에 불투명/투명화 되는 기준, 영문 추천)
+                name: '참새',                 // 2. 팝업창에 크게 뜰 새 이름
+                lat: 37.596957,              // 3. 발견한 장소의 위도 좌표
+                lng: 127.051758,             // 4. 발견한 장소의 경도 좌표
+                date: '2026-05-15',          // 5. 관측 날짜 (초록색 글씨로 표시됨)
+                desc: '여기에 새 설명을 적으세요.', // 6. 새에 대한 설명 글
+                img: 'sparrow.jpg',          // 7. 깃허브에 올린 새 사진 파일 이름
+                audio: 'sparrow_sound.mp3',  // 8. 깃허브에 올린 녹음 파일 이름
+                markerImg: 'sparrow_icon.png'// 9. 지도 위에 핀 대신 보여줄 마커 이미지 이름
             }
         ];
 
