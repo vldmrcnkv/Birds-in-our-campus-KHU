@@ -61,7 +61,7 @@
         .bird-button img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2)); }
 
         /* 팝업창 디자인 */
-        #name-popup {
+         #name-popup {
             display: none;
             position: absolute;
             top: 50%; left: 50%;
@@ -79,12 +79,54 @@
         .team-name { color: #6b8e23; font-weight: bold; font-size: 1.4em; margin-bottom: 12px; }
         .member-names { color: #444; font-size: 1em; margin: 0; line-height: 1.6; }
         .close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; color: #999; font-size: 20px; }
+    
+  /* 스케치 기반 팝업 전체 틀 */
+    .wrap { position: absolute; left: 0; bottom: 40px; width: 320px; margin-left: -160px; text-align: left; font-family: 'Malgun Gothic', dotum, '돋움', sans-serif; }
+    
+    /* 팝업 배경 및 바깥 테두리 (모든 요소를 감싸는 진짜 창) */
+    .info { width: 100%; padding: 15px; border: 2px solid #333; background: #fff; position: relative; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; }
+    
+    /* X (닫기) 버튼 */
+    .close-btn { position: absolute; top: 10px; right: 12px; cursor: pointer; font-weight: bold; color: #666; font-size: 16px; z-index: 10; }
+    .close-btn:hover { color: #000; }
+    
+    /* 상단 좌우 레이아웃 (사진 vs 텍스트) */
+    .main-content { display: flex; gap: 15px; }
+    
+    /* 왼쪽 큰 네모: 기록자료 영역 */
+    .media-box { width: 110px; height: 120px; border: 1.5px solid #333; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #555; text-align: center; background: #fafafa; flex-shrink: 0; }
+    
+    /* 오른쪽 텍스트 영역 */
+    .text-box { flex: 1; display: flex; flex-direction: column; }
+    
+    /* 날짜, 종, 설명 */
+    .date { color: #5B8A2B; font-size: 13px; font-weight: bold; margin-bottom: 2px; padding-top: 5px; }
+    .species { font-size: 18px; font-weight: bold; margin-bottom: 8px; color: #000; }
+    /* 기존 .desc 코드를 지우고 이걸로 바꿔주세요! */
+    .desc { 
+        border: 1.5px solid #333; 
+        padding: 8px; 
+        font-size: 12px; 
+        color: #333; 
+        background: #fff; 
+        box-sizing: border-box; 
+        
+        min-height: 50px; /* ⬅️ height 대신 min-height로 수정! */
+        overflow-y: visible; /* 글씨가 가려지거나 튀어나오지 않게 처리 */
+    }
+    
+    /* ⭐ 오디오 플레이어 (불필요한 테두리 빼고 팝업 안에 꽉 차고 깔끔하게!) */
+    .audio-player { width: 100%; height: 35px; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="map-box">
-        <!-- 제목 영역 -->
+    <div class="map-wrapper" style="width: 95%; max-width: 1000px; margin: 40px auto; border: 4px solid #5B8A2B; border-radius: 8px; overflow: hidden; box-sizing: border-box; background-color: #fff;">
+        
+        <div id="map" style="width: 100%; height: 600px; display: block;"></div>
+        
+    </div>
+    <!-- 제목 영역 -->
         <div class="title-area">
             <h1>캠퍼스의 새들</h1>
             <h2>조류를 통해 자연을 만나다</h2>
@@ -125,36 +167,64 @@
 
         // --- 여기서부터 마커와 인포윈도우 설정 ---
 
-        // [마커 좌표] 핀을 꼽고 싶은 위치의 좌표
-        var markerPosition = new kakao.maps.LatLng(37.596957, 127.051758); 
+       var activeOverlay = null; // 열려있는 팝업을 기억할 변수
 
-        // [마커 생성]
-        var marker = new kakao.maps.Marker({
-            position: markerPosition
+        // 1. 새 데이터 배열 (사진에 있던 긴꼬리딱새 좌표를 첫 번째로 넣었어!)
+        var singleBirdLocations = [
+            { lat: 37.596957, lng: 127.051758, date: '2026-06-02', species: '직박구리', desc: '교내 어디서나 쉽게 볼 수 있' },
+            // 좌표를 더 추가하고 싶으면 아래처럼 쉼표(,)로 구분해서 계속 적어주면 돼
+            { lat: 37.597500, lng: 127.052000, date: '2026-06-03', species: '긴꼬리딱새', desc: '여기는 두 번째 관찰 장소야' }
+        ];
+
+        // 2. 데이터를 돌면서 여러 개의 마커와 팝업 생성
+        singleBirdLocations.forEach(function(data) {
+            var markerPosition = new kakao.maps.LatLng(data.lat, data.lng);
+            var marker = new kakao.maps.Marker({
+                map: map,
+                position: markerPosition
+            });
+            
+// ⭐ 오디오 파일이 있으면 군더더기 없이 플레이어만 깔끔하게 추가
+        var audioHTML = '';
+        if (data.audioUrl) {
+            audioHTML = '<audio class="audio-player" src="' + data.audioUrl + '" controls controlsList="nodownload"></audio>';
+        }
+
+        // 팝업 HTML 조립 (info 박스 안에 모든 게 예쁘게 들어감)
+        var content = document.createElement('div');
+        content.className = 'wrap';
+        content.innerHTML = 
+            '<div class="info">' + 
+            '    <div class="close-btn" title="닫기">X</div>' + 
+            '    <div class="main-content">' + 
+            '        <div class="media-box">기록자료<br>(사진)</div>' + 
+            '        <div class="text-box">' + 
+            '            <div class="date">' + data.date + '</div>' + 
+            '            <div class="species">' + data.species + '</div>' + 
+            '            <div class="desc">' + data.desc + '</div>' + 
+            '        </div>' + 
+            '    </div>' + 
+            '    ' + audioHTML + // 왼쪽 사진, 오른쪽 글 밑에 오디오가 깔끔하게 들어감
+            '</div>';
+
+            var overlay = new kakao.maps.CustomOverlay({
+                content: content,
+                position: marker.getPosition(),
+                yAnchor: 1.15 
+            });
+
+            var closeBtn = content.querySelector('.close-btn');
+            closeBtn.onclick = function() {
+                overlay.setMap(null);
+            };
+
+            kakao.maps.event.addListener(marker, 'click', function() {
+                if (activeOverlay) activeOverlay.setMap(null);
+                overlay.setMap(map);
+                activeOverlay = overlay;
+            });
         });
-        marker.setMap(map); // 마커를 지도 위에 올림
-
-        // [인포윈도우(이미지 팝업) 내용] 
-        // 4단계: 여기에 깃허브 이미지 링크를 넣었습니다.
-        var iwContent = `
-            <div style="padding:10px; min-width:180px; text-align:center;">
-                <img src="https://raw.githubusercontent.com/vldmrcnkv/Birds-in-our-campus-KHU/main/%EA%B8%B4%EA%BC%AC%EB%A6%AC%EB%94%B1%EC%83%88%EC%9D%98%20%EA%B7%B8%EB%A6%BC.png" 
-                     style="width:150px; border-radius:5px; display:block; margin:0 auto 5px;">
-                <span style="font-size:12px; color:#6b8e23; font-weight:bold;">긴꼬리딱새 관찰 지점</span>
-            </div>`,
-            iwRemoveable = true; // X 버튼 활성화
-
-        // [인포윈도우 생성]
-        var infowindow = new kakao.maps.InfoWindow({
-            content : iwContent,
-            removable : iwRemoveable
-        });
-
-        // [클릭 이벤트] 마커를 클릭하면 인포윈도우가 열리게 설정
-        kakao.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map, marker);  
-        });
-    });
+    }); //
 
     // 오른쪽 아래 새 이미지 클릭 시 뜨는 팀원 소개 팝업 함수
     function showNamePopup() { document.getElementById('name-popup').style.display = 'block'; }
